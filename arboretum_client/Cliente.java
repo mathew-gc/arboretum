@@ -22,6 +22,7 @@ public class Cliente {
     private JTextArea textArea;
     private JButton createButton;
     private JButton joinButton;
+    private JButton exitButton; // Botón para salir de la partida
 
     private Socket socket;
     private Scanner input;
@@ -36,6 +37,8 @@ public class Cliente {
                 gameName = textField.getText().trim();
                 if (!gameName.isEmpty()) {
                     sendMessage("CREATE|" + gameName);
+                    createButton.setEnabled(false);
+                    joinButton.setEnabled(false);
                 }
             }
         });
@@ -45,7 +48,17 @@ public class Cliente {
                 gameName = textField.getText().trim();
                 if (!gameName.isEmpty()) {
                     sendMessage("JOIN|" + gameName);
+                    createButton.setEnabled(false);
+                    joinButton.setEnabled(false);
                 }
+            }
+        });
+
+        exitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                sendMessage("EXIT");
+                createButton.setEnabled(true);
+                joinButton.setEnabled(true);
             }
         });
     }
@@ -79,6 +92,10 @@ public class Cliente {
         joinButton = new JButton("Unirse a Partida");
         joinButton.setBounds(170, 150, 150, 30);
         frame.getContentPane().add(joinButton);
+
+        exitButton = new JButton("Salir");
+        exitButton.setBounds(650, 150, 100, 30);
+        frame.getContentPane().add(exitButton);
 
         textArea = new JTextArea();
         textArea.setEditable(false);
@@ -131,9 +148,13 @@ public class Cliente {
             gameName = parts[1];
             textArea.append("Se ha creado la partida '" + gameName + "'\n");
             textArea.append("Te has unido a la partida '" + gameName + "'\n");
+            createButton.setEnabled(false);
+            joinButton.setEnabled(false);
         } else if (command.equals("JOINED_GAME")) {
             gameName = parts[1];
             textArea.append("Te has unido a la partida '" + gameName + "'\n");
+            createButton.setEnabled(false);
+            joinButton.setEnabled(false);
         }
 
         // Lógica adicional para manejar otros comandos y actualizar la interfaz de usuario según sea necesario
