@@ -13,13 +13,14 @@ import java.util.Scanner;
 public class Cliente {
 
     private static final int SERVER_PORT = 12345; // Puerto del servidor
+    private static final int BOARD_SIZE = 5; // Tamaño del tablero (número de filas y columnas)
 
     private JFrame frame;
     private JLabel nameLabel; // Etiqueta para el campo de nombre
     private JTextField nameField;
     private JLabel gameLabel; // Etiqueta para el campo de nombre de partida
     private JTextField textField;
-    private JTextArea textArea;
+    private JPanel boardPanel; // Panel que representa el tablero
     private JButton createButton;
     private JButton joinButton;
     private JButton exitButton; // Botón para salir de la partida
@@ -97,11 +98,20 @@ public class Cliente {
         exitButton.setBounds(650, 150, 100, 30);
         frame.getContentPane().add(exitButton);
 
-        textArea = new JTextArea();
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setBounds(10, 190, 760, 360);
-        frame.getContentPane().add(scrollPane);
+        // Crear el panel del tablero
+        boardPanel = new JPanel();
+        boardPanel.setBounds(10, 190, 760, 360);
+        boardPanel.setLayout(new GridLayout(BOARD_SIZE, BOARD_SIZE));
+        frame.getContentPane().add(boardPanel);
+
+        // Agregar las posiciones al tablero
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                JPanel positionPanel = new JPanel();
+                positionPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                boardPanel.add(positionPanel);
+            }
+        }
 
         frame.setVisible(true);
     }
@@ -146,13 +156,13 @@ public class Cliente {
 
         if (command.equals("GAME_CREATED")) {
             gameName = parts[1];
-            textArea.append("Se ha creado la partida '" + gameName + "'\n");
-            textArea.append("Te has unido a la partida '" + gameName + "'\n");
+            JOptionPane.showMessageDialog(frame, "Se ha creado la partida '" + gameName + "'");
+            JOptionPane.showMessageDialog(frame, "Te has unido a la partida '" + gameName + "'");
             createButton.setEnabled(false);
             joinButton.setEnabled(false);
         } else if (command.equals("JOINED_GAME")) {
             gameName = parts[1];
-            textArea.append("Te has unido a la partida '" + gameName + "'\n");
+            JOptionPane.showMessageDialog(frame, "Te has unido a la partida '" + gameName + "'");
             createButton.setEnabled(false);
             joinButton.setEnabled(false);
         }
@@ -170,6 +180,3 @@ public class Cliente {
         cliente.connectToServer();
     }
 }
-
-
-
