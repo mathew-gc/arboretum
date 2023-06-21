@@ -1,0 +1,52 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "ClientJuego",
+      "request": "launch",
+      "mainClass": "arboretum_client.ClientJuego",
+      "projectName": "arboretum_3e51a1f7"
+    },
+    {
+      "type": "java",
+      "name": "ClientMenu",
+      "request": "launch",
+      "mainClass": "arboretum_client.ClientMenu",
+      "projectName": "arboretum_3e51a1f7"
+    },
+    {
+      "type": "java",
+      "name": "Client",
+      "request": "launch",
+      "mainClass": "arboretum_client.Client",
+      "projectName": "arboretum_3e51a1f7"
+    },
+    {
+      "type": "java",
+      "name": "cliente",
+      "request": "launch",
+      "mainClass": "arboretum_client.cliente",
+      "projectName": "arboretum_3e51a1f7"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "cwd": "c:/Users/sgtom/Desktop/proyectos/arboretum/arboretum_server",
+      "program": "c:/Users/sgtom/Desktop/proyectos/arboretum/arboretum_server/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}
