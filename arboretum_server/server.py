@@ -1,62 +1,61 @@
 import socket
 import threading
-import random
 
-class Room:
-    def __init__(self, code):
-        self.code = code
-        self.clients = []
-        self.max_clients = 4
-        self.client_names = []
-        self.points = {}
-
-    def add_client(self, client_socket, client_name):
-        if len(self.clients) < self.max_clients:
-            self.clients.append(client_socket)
-            self.client_names.append(client_name)
-            self.points[client_name] = 0
-            return True
-        return False
-
-    def start_game(self):
-        if len(self.clients) >= 1:
-            print(f"Game started in room {self.code}")
-            # Aquí puedes implementar la lógica del juego
-
-class Server:
-    def __init__(self, host, port):
-        self.host = host
-        self.port = port
-        self.rooms = {}
-    def handle_client(self, client_socket):
-        client_name = client_socket.recv(1024).decode("utf-8")
-        room_code = self.generate_room_code()
-
-        print(f"Client {client_name} connected to room {room_code}")
-
-        room = Room(room_code)
-        self.rooms[room_code] = room
-        room.add_client(client_socket, client_name)
-        client_socket.sendall(room_code.encode("utf-8"))
-        #while True:
-            # Aquí puedes manejar las interacciones entre el cliente y la sala de juego
-
-    def generate_room_code(self):
-        code = ""
-        while code == "" or code in self.rooms:
-            code = str(random.randint(1000, 9999))
-        return code
+class Servidor:
+    def __init__(self):
+        self.host = socket.gethostbyname(socket.gethostname())
+        self.port = 12345
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.bind((self.host, self.port))
+        self.partidas = {}
+        self.lock = threading.Lock()
 
     def start(self):
-        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_socket.bind((self.host, self.port))
-        server_socket.listen(5)
-        print(f"Server started on {self.host}:{self.port}")
-
+        self.server.listen(5)
+        print(f"Servidor iniciado. Esperando conexiones en {self.host}:{self.port}...")
         while True:
-            client_socket, client_address = server_socket.accept()
-            threading.Thread(target=self.handle_client, args=(client_socket,)).start()
+            client, address = self.server.accept()
+            threading.Thread(target=self.handle_client, args=(client,)).start()
 
-if __name__ == "__main__":
-    server = Server("127.0.0.1", 5000)
-    server.start()
+    def handle_client(self, client):
+        print(f"Cliente conectado: {client}")
+        while True:
+            message = client.recv(1024).decode()
+            if message:
+                self.handle_game_message(client, message)
+            else:
+                break
+        client.close()
+        print(f"Cliente desconectado: {client}")
+
+    def handle_game_message(self, client, message):
+        parts = message.split("|")
+        command = parts[0]
+
+        if command == "CREATE":
+            game_name = parts[1]
+            self.lock.acquire()
+            self.partidas[game_name] = [client]
+            self.lock.release()
+            self.print_partidas()
+            client.send("GAME_CREATED|{}".format(game_name).encode())
+
+        elif command == "JOIN":
+            game_name = parts[1]
+            if game_name in self.partidas:
+                self.lock.acquire()
+                self.partidas[game_name].append(client)
+                self.lock.release()
+                self.print_partidas()
+                client.send("JOINED_GAME|{}".format(game_name).encode())
+            else:
+                client.send("GAME_NOT_FOUND".encode())
+
+    def print_partidas(self):
+        print("Partidas:")
+        for game_name, clients in self.partidas.items():
+            print("- {} - Jugadores: {}".format(game_name, len(clients)))
+
+
+servidor = Servidor()
+servidor.start()

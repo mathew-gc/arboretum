@@ -3,6 +3,20 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Cliente",
+      "request": "launch",
+      "mainClass": "arboretum_client.Cliente",
+      "projectName": "arboretum_3e51a1f7"
+    },
+    {
+      "type": "java",
+      "name": "ArboretumGame",
+      "request": "launch",
+      "mainClass": "arboretum_client.ArboretumGame",
+      "projectName": "arboretum_3e51a1f7"
+    },
+    {
+      "type": "java",
       "name": "ClientJuego",
       "request": "launch",
       "mainClass": "arboretum_client.ClientJuego",
